@@ -17,18 +17,12 @@ This project implements a lightweight container runtime similar to Docker using 
 
 ### 📌 Prerequisites
 
-Ubuntu 22.04 or 24.04 VM with **Secure Boot OFF**
+Ubuntu 22.04 or 24.04 VM with Secure Boot OFF
 
 ```bash
 sudo apt update
 sudo apt install -y build-essential linux-headers-$(uname -r)
 ```
-
-**Explanation:**
-
-* `apt update` → updates package list
-* `build-essential` → installs compiler tools (gcc, make)
-* `linux-headers` → required to build kernel module
 
 ---
 
@@ -38,15 +32,6 @@ sudo apt install -y build-essential linux-headers-$(uname -r)
 cd boilerplate
 make
 ```
-
-**Explanation:**
-
-* Compiles the project
-* Generates:
-
-  * `engine` (container runtime)
-  * `monitor.ko` (kernel module)
-  * `memory_hog`, `cpu_hog`, `io_pulse` (test programs)
 
 ---
 
@@ -58,11 +43,6 @@ wget https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/x86_64/alpine-miniroot
 tar -xzf alpine-minirootfs-3.20.3-x86_64.tar.gz -C rootfs-base
 ```
 
-**Explanation:**
-
-* Downloads minimal Alpine Linux filesystem
-* Used as container environment
-
 ---
 
 ### 🧩 Load Kernel Module
@@ -72,11 +52,6 @@ sudo insmod monitor.ko
 ls /dev/container_monitor
 ```
 
-**Explanation:**
-
-* Loads kernel module into kernel
-* Enables memory monitoring for containers
-
 ---
 
 ### 🚀 Start Supervisor
@@ -84,13 +59,6 @@ ls /dev/container_monitor
 ```bash
 sudo ./engine supervisor ./rootfs-base
 ```
-
-**Explanation:**
-
-* Starts container manager (supervisor)
-* Handles container lifecycle and prevents zombie processes
-
-👉 Keep this running and open another terminal
 
 ---
 
@@ -104,11 +72,6 @@ sudo ./engine start alpha ./rootfs-alpha /bin/sh --soft-mib 48 --hard-mib 80
 sudo ./engine start beta  ./rootfs-beta  /bin/sh --soft-mib 64 --hard-mib 96
 ```
 
-**Explanation:**
-
-* Creates container instances
-* Applies memory limits (soft & hard)
-
 ---
 
 ### 🖥️ CLI Commands
@@ -120,12 +83,6 @@ sudo ./engine stop alpha
 sudo ./engine stop beta
 ```
 
-**Explanation:**
-
-* `ps` → list containers
-* `logs` → view output
-* `stop` → terminate container
-
 ---
 
 ### ▶️ Run Container and Wait
@@ -135,11 +92,6 @@ cp -a ./rootfs-base ./rootfs-test
 sudo ./engine run test ./rootfs-test "echo hello from container"
 sudo ./engine logs test
 ```
-
-**Explanation:**
-
-* Runs container and waits for completion
-* Useful for short tasks
 
 ---
 
@@ -152,12 +104,6 @@ cp ./memory_hog ./rootfs-mem/
 sudo ./engine run memtest ./rootfs-mem /memory_hog --soft-mib 10 --hard-mib 20
 sudo dmesg | tail -10
 ```
-
-**Explanation:**
-
-* Tests memory usage
-* Soft limit → warning
-* Hard limit → container killed
 
 ---
 
@@ -179,39 +125,20 @@ sudo ./engine logs c1
 sudo ./engine logs c2
 ```
 
-**Explanation:**
-
-* Demonstrates CPU scheduling
-* Lower nice value → higher priority
-
 ---
 
 ### 🧹 Cleanup
 
 ```bash
-# Stop supervisor using Ctrl+C
 sudo rmmod monitor
 sudo dmesg | tail -5
-```
-
-**Explanation:**
-
-* Removes kernel module
-* Cleans system
-
----
-
-### ✅ CI Safe Build
-
-```bash
-make -C boilerplate ci
 ```
 
 ---
 
 ## 📸 3. Demo Screenshots
 
-Add screenshots in `screenshot/` folder:
+Add your screenshots:
 
 ```md
 ![Screenshot](screenshot/image1.png)
@@ -219,32 +146,113 @@ Add screenshots in `screenshot/` folder:
 
 ---
 
-## 🧠 4. Engineering Concepts
+## 🧠 4. Engineering Analysis
 
-* Process Isolation using namespaces
-* Inter-process communication (pipes & sockets)
-* Memory monitoring using kernel module
-* Scheduling using Linux CFS
+### 1. Isolation Mechanisms
+
+The runtime achieves isolation using Linux namespaces and chroot. When launching a container, clone() is called with CLONE_NEWPID, CLONE_NEWUTS, and CLONE_NEWNS. CLONE_NEWPID gives the container its own PID namespace so it sees itself as PID 1 and cannot observe host processes. CLONE_NEWUTS provides an independent hostname. CLONE_NEWNS creates a separate mount namespace so filesystem mounts inside the container do not affect the host.
+
+The child process calls chroot() into its assigned rootfs directory, making that directory appear as /. /proc is mounted inside the container namespace so process utilities work correctly inside.
+
+The host kernel still shares:
+
+* Kernel code
+* Network namespace
+* IPC namespace
+* User namespace
 
 ---
 
-## ⚖️ 5. Key Features
+### 2. Supervisor and Process Lifecycle
 
-* Lightweight container runtime
-* Multi-container support
-* Memory limits (soft & hard)
-* Logging system
-* CLI interface
+A long-running supervisor is necessary because containers are child processes requiring a parent to reap them. Without a persistent parent, exited containers become zombies.
+
+The supervisor installs a SIGCHLD handler that calls:
+
+```bash
+waitpid(-1, WNOHANG)
+```
+
+This ensures all child processes are cleaned properly.
+
+---
+
+### 3. IPC, Threads, and Synchronization
+
+#### Path A — Logging via Pipes
+
+* stdout/stderr → pipe
+* Producer thread → buffer
+* Consumer thread → log file
+
+Uses:
+
+* mutex
+* condition variables
+
+---
+
+#### Path B — Control via UNIX Socket
+
+* Socket: `/tmp/mini_runtime.sock`
+* Uses `select()`
+* Handles CLI commands
+
+---
+
+### 4. Memory Management and Enforcement
+
+RSS measures actual memory used.
+
+* Soft limit → warning
+* Hard limit → SIGKILL
+
+Kernel module ensures strict enforcement.
+
+---
+
+### 5. Scheduling Behavior
+
+Linux uses CFS scheduler.
+
+| Nice | Priority |
+| ---- | -------- |
+| -5   | High     |
+| +10  | Low      |
+
+Higher priority containers get more CPU time.
+
+---
+
+## ⚖️ 5. Design Decisions and Tradeoffs
+
+* chroot used instead of pivot_root (simpler, less secure)
+* single-thread supervisor (simple, less scalable)
+* mutex used instead of spinlock (safe for sleeping operations)
+
+---
+
+## 📊 6. Scheduler Experiment Results
+
+| Container | Nice | Behavior |
+| --------- | ---- | -------- |
+| c1        | +10  | Less CPU |
+| c2        | -5   | More CPU |
+
+### Analysis
+
+c2 received more CPU time due to higher priority.
+c1 was preempted frequently.
 
 ---
 
 ## 🚀 Conclusion
 
-This project demonstrates core OS concepts including:
+This project demonstrates:
 
-* Containers
-* Kernel modules
+* Process Isolation
+* Memory Management
 * Scheduling
-* Memory management
+* IPC mechanisms
 
-A complete mini Docker-like system built from scratch.
+A complete lightweight container runtime system.
