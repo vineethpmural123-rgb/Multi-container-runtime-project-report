@@ -144,45 +144,45 @@ sudo dmesg | tail -5
 ---
 
 ### Screenshot 2 — Metadata tracking
-![Screenshot 2](s2.jpeg)  
+![Screenshot 2](s2.png)  
 **Caption:** `ps` command showing container ID, host PID, state, start time, memory limits, and termination reason.
 
 ---
 
 ### Screenshot 3 — Bounded-buffer logging
-![Screenshot 3](s3.jpeg)  
+![Screenshot 3](s3.png)  
 **Caption:** Container stdout captured via pipe, passed through bounded buffer, and written to log file by consumer thread.
 
 ---
 
 ### Screenshot 4 — CLI and IPC
-![Screenshot 4](s4.jpeg)  
+![Screenshot 4](s4.png)  
 **Caption:** CLI client connects to supervisor over UNIX domain socket at `/tmp/mini_runtime.sock`, sends request, receives response.
 
 ---
 
 ### Screenshot 5 — Soft-limit warning
-![Screenshot 5](s5.jpeg)  
+![Screenshot 5](s5.png)  
 **Caption:** Kernel module logs a warning when container RSS exceeds soft limit of 10 MiB.
 
 ---
 
 ### Screenshot 6 — Hard-limit enforcement
-![Screenshot 6](s6.jpeg)  
+![Screenshot 6](s6.png)  
 **Caption:** Kernel module sends SIGKILL when RSS exceeds 20 MiB hard limit. Supervisor metadata shows `hard_limit_killed`.
 
 ---
 
 ### Screenshot 7 — Scheduling experiment
-![Screenshot 7](s7.jpeg)  
-![Screenshot 7](s7.jpeg)  
-![Screenshot 7](s7.jpeg)  
+![Screenshot 7](s7.png)  
+![Screenshot 7](s7.png)  
+![Screenshot 7](s7.png)  
 **Caption:** c2 (`nice -5`, higher priority) received larger CPU time slices. c1 (`nice 10`) was preempted, visible as gaps in progress reporting.
 
 ---
 
 ### Screenshot 8 — Clean teardown
-![Screenshot 8](s8.jpeg)  
+![Screenshot 8](s8.png)  
 **Caption:** Supervisor stops all containers, joins logging thread, and frees resources. No zombie processes remain.
 
 
