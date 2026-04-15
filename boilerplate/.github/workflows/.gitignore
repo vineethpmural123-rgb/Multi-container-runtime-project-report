@@ -1,0 +1,4 @@
+engine
+*.o
+*.ko
+logs/*.log
