@@ -137,49 +137,62 @@ sudo dmesg | tail -5
 ---
 ## 📸 3. Demo Screenshots
 
-### Screenshot 1 — Multi-container supervision
-![Screenshot 1](s1.png)  
-**Caption:** Both containers running simultaneously under a single supervisor process.
+## Screenshot 1 — Multi-container supervision
+![Screenshot 1](screenshot/s1.png)
+
+Caption: Both containers running simultaneously under a single supervisor process.
 
 ---
 
-### Screenshot 2 — Metadata tracking
-![Screenshot 2](s2.png)  
-**Caption:** `ps` command showing container ID, host PID, state, start time, memory limits, and termination reason.
+## Screenshot 2 — Metadata tracking
+![Screenshot 2](screenshot/s2.png)
+
+Caption: `ps` command showing container ID, host PID, state, start time, memory limits, and termination reason.
 
 ---
 
-### Screenshot 3 — Bounded-buffer logging
-![Screenshot 3](s3.png)  
-**Caption:** Container stdout captured via pipe, passed through bounded buffer, and written to log file by consumer thread.
+## Screenshot 3 — Bounded-buffer logging
+![Screenshot 3](screenshot/s3.png)
+
+Caption: Container stdout captured via pipe, passed through bounded buffer, and written to log file.
 
 ---
 
-### Screenshot 4 — CLI and IPC
-![Screenshot 4](s4.png)  
-**Caption:** CLI client connects to supervisor over UNIX domain socket at `/tmp/mini_runtime.sock`.
+## Screenshot 4 — CLI and IPC
+![Screenshot 4](screenshot/s4.png)
+
+Caption: CLI client connects to supervisor over UNIX domain socket at `/tmp/mini_runtime.sock`, sends request, and receives response.
 
 ---
 
-### Screenshot 5 — Soft-limit warning
-![Screenshot 5](s5.png)
+## Screenshot 5 — Soft-limit warning
+![Screenshot 5](screenshot/s5.png)
+
+Caption: Kernel module logs a warning when container RSS exceeds soft limit of 10 MiB.
 
 ---
 
-### Screenshot 6 — Hard-limit enforcement
-![Screenshot 6](s6.png)
+## Screenshot 6 — Hard-limit enforcement
+![Screenshot 6](screenshot/s6.png)
+
+Caption: Kernel module sends SIGKILL when RSS exceeds 20 MiB hard limit.
 
 ---
 
-### Screenshot 7 — Scheduling experiment
-![Screenshot 7](s7.png)
-![Screenshot 7](s7.png)
-![Screenshot 7](s7.png)
+## Screenshot 7 — Scheduling experiment
+![Screenshot 7](screenshot/s7.png)
+![Screenshot 7](screenshot/s7.png)
+![Screenshot 7](screenshot/s7.png)
+
+Caption: c2 (`nice -5`) received more CPU time, while c1 (`nice 10`) was preempted.
 
 ---
 
-### Screenshot 8 — Clean teardown
-![Screenshot 8](s8.png)
+## Screenshot 8 — Clean teardown
+![Screenshot 8](screenshot/s8.png)
+
+Caption: Supervisor stops all containers, cleans resources, and no zombie processes remain.
+
 
 
 
