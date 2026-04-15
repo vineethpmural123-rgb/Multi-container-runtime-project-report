@@ -135,39 +135,56 @@ sudo dmesg | tail -5
 ```
 
 ---
+## 📸 3. Demo Screenshots
 
-3. Demo Screenshots
-Screenshot 1 — Multi-container supervision
-image image
-Caption: Both containers running simultaneously under a single supervisor process.
+### Screenshot 1 — Multi-container supervision
+![Screenshot 1](s1.png)  
+**Caption:** Both containers running simultaneously under a single supervisor process.
 
-Screenshot 2 — Metadata tracking
-image
-Caption: ps command showing container ID, host PID, state, start time, memory limits, and termination reason.
+---
 
-Screenshot 3 — Bounded-buffer logging
-image
-Caption: Container stdout captured via pipe, passed through bounded buffer, and written to log file by consumer thread.
+### Screenshot 2 — Metadata tracking
+![Screenshot 2](s2.jpeg)  
+**Caption:** `ps` command showing container ID, host PID, state, start time, memory limits, and termination reason.
 
-Screenshot 4 — CLI and IPC
-image
-Caption: CLI client connects to supervisor over UNIX domain socket at /tmp/mini_runtime.sock, sends request, receives response.
+---
 
-Screenshot 5 — Soft-limit warning
-image
-Caption: Kernel module logs a warning when container RSS exceeds soft limit of 10 MiB.
+### Screenshot 3 — Bounded-buffer logging
+![Screenshot 3](s3.jpeg)  
+**Caption:** Container stdout captured via pipe, passed through bounded buffer, and written to log file by consumer thread.
 
-Screenshot 6 — Hard-limit enforcement
-image
-Caption: Kernel module sends SIGKILL when RSS exceeds 20 MiB hard limit. Supervisor metadata shows hard_limit_killed.
+---
 
-Screenshot 7 — Scheduling experiment
-image image image
-Caption: c2 (nice -5, higher priority) received larger CPU time slices. c1 (nice 10) was preempted, visible as gaps in progress reporting.
+### Screenshot 4 — CLI and IPC
+![Screenshot 4](s4.jpeg)  
+**Caption:** CLI client connects to supervisor over UNIX domain socket at `/tmp/mini_runtime.sock`, sends request, receives response.
 
-Screenshot 8 — Clean teardown
-image
-Caption: Supervisor stops all containers, joins logging thread, and frees resources. No zombie processes remain.
+---
+
+### Screenshot 5 — Soft-limit warning
+![Screenshot 5](s5.jpeg)  
+**Caption:** Kernel module logs a warning when container RSS exceeds soft limit of 10 MiB.
+
+---
+
+### Screenshot 6 — Hard-limit enforcement
+![Screenshot 6](s6.jpeg)  
+**Caption:** Kernel module sends SIGKILL when RSS exceeds 20 MiB hard limit. Supervisor metadata shows `hard_limit_killed`.
+
+---
+
+### Screenshot 7 — Scheduling experiment
+![Screenshot 7](s7.jpeg)  
+![Screenshot 7](s7.jpeg)  
+![Screenshot 7](s7.jpeg)  
+**Caption:** c2 (`nice -5`, higher priority) received larger CPU time slices. c1 (`nice 10`) was preempted, visible as gaps in progress reporting.
+
+---
+
+### Screenshot 8 — Clean teardown
+![Screenshot 8](s8.jpeg)  
+**Caption:** Supervisor stops all containers, joins logging thread, and frees resources. No zombie processes remain.
+
 
 ## 🧠 4. Engineering Analysis
 
