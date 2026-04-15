@@ -179,6 +179,8 @@ Caption: Kernel module sends SIGKILL when RSS exceeds 20 MiB hard limit. Supervi
 
 ### Screenshot 7 — Scheduling experiment
 ![Screenshot 7](screenshots/s7.png)
+![Screenshot 7](screenshots/s7.png)
+![Screenshot 7](screenshots/s7.png)
 
 Caption: c2 (nice -5, higher priority) received larger CPU time slices. c1 (nice 10) was preempted.
 
