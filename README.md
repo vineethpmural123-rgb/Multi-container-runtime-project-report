@@ -143,14 +143,14 @@ Caption: Both containers running simultaneously under a single supervisor proces
 ---
 
 ### Screenshot 2 — Metadata tracking
-![Screenshot 2](screenshots/Screenshot (2).png)
+![Screenshot 2](screenshots/.png)
 
 Caption: ps command showing container ID, host PID, state, start time, memory limits, and termination reason.
 
 ---
 
 ### Screenshot 3 — Bounded-buffer logging
-![Screenshot 3](screenshots/Screenshot (2)s3.png)
+![Screenshot 3](screenshots/s3.png)
 
 Caption: Container stdout captured via pipe, passed through bounded buffer, and written to log file by consumer thread.
 
