@@ -8,7 +8,7 @@ This project implements a lightweight container runtime similar to Docker using 
 
 | Name                     | SRN           |
 | ------------------------ | ------------- |
-| shantinath baligra | PES1UG25CS691 |
+| shantinath baligar | PES1UG25CS691 |
 | vineeth p      | PES1UG24CS698 |
 
 ---
@@ -143,7 +143,7 @@ Caption: Both containers running simultaneously under a single supervisor proces
 ---
 
 ### Screenshot 2 — Metadata tracking
-![Screenshot 2](screenshots/s2.jpeg)
+![Screenshot 2](screenshots/s2.png)
 
 Caption: ps command showing container ID, host PID, state, start time, memory limits, and termination reason.
 
